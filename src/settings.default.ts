@@ -181,6 +181,17 @@ const settings: SettingsObject = {
 	allowSellingPower: true,
 	allowSellingOps: true,
 
+	// Power funneling:
+	// Send power via terminal to nearby rooms owned by this player. Set to null
+	// to disable. Only RCL 8 rooms (which can have a power spawn) are targeted.
+	powerFunnelPlayer: 'Raykazi',
+	// Maximum linear room distance between our terminal and the target room.
+	// At 10 rooms, the energy cost of a terminal send is about 28% of the
+	// amount of power sent.
+	powerFunnelMaxDistance: 10,
+	// Amount of power each of our rooms keeps for itself instead of sending it.
+	powerFunnelReserve: 0,
+
 	// Script hooks:
 	onGlobalReset: null,
 	onTick: null
