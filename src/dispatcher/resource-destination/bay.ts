@@ -79,7 +79,7 @@ export default class BayDestination extends TaskProvider<BayDestinationTask, Res
 		if (creep.pos.getRangeTo(target.pos) > 0) {
 			// See if we can refill some of the bay's structures while en route.
 			for (const structure of target.extensions) {
-				if (structure.store.getFreeCapacity(RESOURCE_ENERGY) === 0) continue;
+				if ((structure.store as GenericStoreBase).getFreeCapacity(RESOURCE_ENERGY) === 0) continue;
 				if (structure.structureType === STRUCTURE_CONTAINER) continue;
 				if (structure.structureType === STRUCTURE_LINK) continue;
 				if (structure.pos.getRangeTo(creep.pos) > 1) continue;

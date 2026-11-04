@@ -1,5 +1,6 @@
 import defaultSettings from 'settings.default';
 import localSettings from 'settings.local';
+import {RoomSignType} from "./room/sign-generator";
 
 declare global {
 	type SettingsObject = {
@@ -8,6 +9,7 @@ declare global {
 		allowSellingOps: boolean;
 		allowSellingPower: boolean;
 		automaticallyUpgradePowerCreeps: boolean;
+		avoidPlayerRooms: string[];
 		constructFactories: boolean;
 		constructLabs: boolean;
 		constructNukers: boolean;
@@ -76,6 +78,7 @@ declare global {
 		visualizeRemoteMines: boolean;
 		visualizeRoomPlan: boolean;
 		visualizeSpawnQueue: boolean;
+        signTemplate: Record<RoomSignType, string[]>;
 	};
 
 	interface KernelMemory {

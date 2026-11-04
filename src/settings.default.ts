@@ -26,10 +26,16 @@ PWR_OPERATE_STORAGE PWR_GENERATE_OPS */
  * @endcode
  */
 const settings: SettingsObject = {
-	// Relations:
+    signTemplate: undefined,
+    // Relations:
 	// If true, any player that is not declared to be your ally will be treated
 	// as an enemy, rather than neutral, and actively harrassed.
 	treatNonAlliesAsEnemies: false,
+
+	// Players to avoid when settling or remote mining.
+	// Any room owned or reserved by these players, or within 2 room steps of
+	// such a room, will not be settled or used for remote mining.
+	avoidPlayerRooms: [] as string[],
 
 	// Visualization:
 	// If true, lines representing connections in the bot's nav mesh will be drawn
@@ -50,7 +56,7 @@ const settings: SettingsObject = {
 	maxRemoteMinePathLength: 150,
 	// Filter rooms where remote mining is allowed to take place. This needs to be
 	// a function that is passed a room name and returns true for allowed rooms.
-	remoteMineRoomFilter: null,
+	remoteMineRoomFilter: (roomName: string) => false,
 
 	// Power mining:
 	// Enable power mining in general.
@@ -110,7 +116,7 @@ const settings: SettingsObject = {
 	// Number of ticks we may cache expansion scores.
 	expansionScoreCacheDuration: 20_000,
 	minOwnedRooms: 1,
-	maxOwnedRooms: null,
+	maxOwnedRooms: 10,
 	// Maximum amount of CPU that may be spent each tick on finding a suitable
 	// expansion target.
 	maxExpansionCpuPerTick: 30,
@@ -177,7 +183,7 @@ const settings: SettingsObject = {
 
 	// Script hooks:
 	onGlobalReset: null,
-	onTick: null,
+	onTick: null
 };
 
 export default settings;

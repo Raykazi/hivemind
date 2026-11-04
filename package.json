@@ -31,8 +31,10 @@
 	"scripts": {
 		"prebuild": "node scripts/prebuild.cjs",
 		"build": "rollup -c",
-		"test": "xo"
-	},
+		"test": "xo",
+        "push-sarrick": "rollup -c --environment DEST:sarrick",
+        "push-cyborger": "rollup -c --environment DEST:cyborger"
+    },
 	"devDependencies": {
 		"@babel/core": "^7.15.0",
 		"@rollup/plugin-commonjs": "^20.0.0",

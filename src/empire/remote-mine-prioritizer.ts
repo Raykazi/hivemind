@@ -2,6 +2,7 @@ import RoomStatus from 'room/room-status';
 import settings from 'settings-manager';
 import SquadManager from 'manager.squad';
 import {getRoomIntel} from 'room-intel';
+import {isRoomNearPlayers} from 'utils/player-filter';
 
 interface HarvestRoomInfo {
 	roomName: string;
@@ -56,9 +57,13 @@ export default class RemoteMinePrioritizer {
 				const roomFilter = settings.get('remoteMineRoomFilter');
 				if (roomFilter && !roomFilter(info.roomName)) continue;
 
-				// Harvest from this room.
-				result.push(info.roomName);
-			}
+					// Don't remote mine near players we want to avoid.
+					const avoidPlayers = settings.get('avoidPlayerRooms');
+					if (isRoomNearPlayers(info.roomName, avoidPlayers)) continue;
+
+					// Harvest from this room.
+					result.push(info.roomName);
+				}
 
 			availableHarvestRoomCount++;
 		}

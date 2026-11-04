@@ -29,6 +29,7 @@ import AlliesProcess from 'process/allies';
 import CleanupProcess from 'process/cleanup';
 import CreepsProcess from 'process/creeps';
 import DepositMiningProcess from 'process/strategy/deposits';
+import DonateMineralsProcess from 'process/strategy/donate-minerals';
 import ExpandProcess from 'process/strategy/expand';
 import InitProcess from 'process/init';
 import interShard from 'intershard';
@@ -42,6 +43,7 @@ import RemoteMiningProcess from 'process/strategy/mining';
 import ReportProcess from 'process/report';
 import ResourcesProcess from 'process/resources';
 import RoomsProcess from 'process/rooms';
+import ManualAttackProcess from 'process/strategy/manual-attack';
 import ScoutProcess from 'process/strategy/scout';
 import SpawnPowerCreepsProcess from 'process/power-creeps/spawn';
 import TradeProcess from 'process/trade';
@@ -68,6 +70,9 @@ declare global {
 			Profiler: Profiler;
 		}
 	}
+    interface Memory {
+        username?: string;
+    }
 
 	const _: typeof _;
 }
@@ -123,7 +128,9 @@ class BotKernel {
 		hivemind.onTickStart();
 
 		this.cleanup();
-
+        if(Memory.username === undefined) {
+            Memory.username = Game.rooms[Object.keys(Game.rooms)[0]].controller?.owner.username;
+        }
 		hivemind.runProcess('init', InitProcess, {
 			priority: PROCESS_PRIORITY_ALWAYS,
 		});
@@ -190,6 +197,11 @@ class BotKernel {
 			});
 		}
 
+		hivemind.runProcess('strategy.manual_attack', ManualAttackProcess, {
+			interval: 5,
+			priority: PROCESS_PRIORITY_HIGH,
+		});
+
 		hivemind.runProcess('strategy.inter_shard', InterShardProcess, {
 			interval: 100,
 			priority: PROCESS_PRIORITY_LOW,
@@ -203,7 +215,11 @@ class BotKernel {
 			hivemind.runProcess('empire.resources', ResourcesProcess, {
 				interval: 5,
 			});
-		}
+				hivemind.runProcess('empire.donate_minerals', DonateMineralsProcess, {
+					interval: 100,
+					priority: PROCESS_PRIORITY_LOW,
+				});
+			}
 
 		hivemind.runProcess('empire.report', ReportProcess, {
 			interval: 100,

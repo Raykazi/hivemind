@@ -13,6 +13,7 @@ import SquadManager from 'manager.squad';
 import stats from 'utils/stats';
 import {getUsername} from 'utils/account';
 import {getRoomIntel} from 'room-intel';
+import {isRoomNearPlayers} from 'utils/player-filter';
 
 interface ExpansionTarget {
 	roomName: string;
@@ -177,6 +178,14 @@ export default class ExpandProcess extends Process {
 
 			const roomIntel = getRoomIntel(roomName);
 			if (roomIntel.isOwned()) continue;
+
+			// Don't claim a room an ally is remote mining.
+			const reservation = roomIntel.getReservationStatus();
+			if (reservation?.username && hivemind.relations.isAlly(reservation.username)) continue;
+
+				// Don't settle near players we want to avoid.
+				const avoidPlayers = settings.get('avoidPlayerRooms');
+				if (isRoomNearPlayers(roomName, avoidPlayers)) continue;
 
 			expansionTargetScoringProgress.rooms[roomName] = true;
 			const expansionScore = this.roomStatus.getExpansionScore(roomName) || 0;

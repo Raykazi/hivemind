@@ -28,7 +28,7 @@ export default class StructureSource<TaskType extends StructureSourceTask> exten
 		if (!task.resourceType) return false;
 		const structure = Game.getObjectById(task.target);
 		if (!structure) return false;
-		if (structure.store.getUsedCapacity(task.resourceType) === 0) return false;
+		if ((structure.store as GenericStoreBase).getUsedCapacity(task.resourceType) === 0) return false;
 		if (context.creep.store.getFreeCapacity(task.resourceType) === 0) return false;
 		if (!this.isSafePosition(context.creep, structure.pos)) return false;
 
@@ -44,7 +44,7 @@ export default class StructureSource<TaskType extends StructureSourceTask> exten
 
 			let result: ScreepsReturnCode;
 			if (task.amount) {
-				result = creep.withdraw(target, resourceType, Math.min(target.store.getUsedCapacity(resourceType), creep.memory.order.amount, creep.store.getFreeCapacity()));
+				result = creep.withdraw(target, resourceType, Math.min((target.store as GenericStoreBase).getUsedCapacity(resourceType), creep.memory.order.amount, creep.store.getFreeCapacity()));
 			}
 			else {
 				result = creep.withdraw(target, resourceType);

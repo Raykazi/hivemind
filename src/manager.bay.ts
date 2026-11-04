@@ -173,7 +173,7 @@ export default class Bay {
 			return false;
 		}
 
-		const targetCapacity = target.store.getFreeCapacity(RESOURCE_ENERGY);
+		const targetCapacity = (target.store as GenericStoreBase).getFreeCapacity(RESOURCE_ENERGY);
 		const amount = Math.min(creep.store.getUsedCapacity(RESOURCE_ENERGY), targetCapacity);
 		const isLastTransfer = amount >= this.energyCapacity - this.energy || amount === creep.store.getUsedCapacity(RESOURCE_ENERGY);
 		if (creep.transfer(target, RESOURCE_ENERGY) === OK && isLastTransfer) return false;
@@ -183,7 +183,7 @@ export default class Bay {
 
 	getStructuresNeedingRefill() {
 		return _.filter(this.extensions, (extension: AnyBayStructure) => {
-			if (extension.store) return extension.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
+			if (extension.store) return (extension.store as GenericStoreBase).getFreeCapacity(RESOURCE_ENERGY) > 0;
 
 			return false;
 		});

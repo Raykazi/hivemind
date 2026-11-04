@@ -46,6 +46,25 @@ const roomName = 'E43S53'; Game.rooms[roomName].setEvacuating(true); Memory.stra
 // Send a squad to operate in a room.
 const s = container.get('SquadManager').getOrCreateSquad('squadName'); s.setSpawn('W25S18'); s.setTarget(new RoomPosition(24, 24, 'W28S19')); s.addUnit('ranger');
 
+// ============================================================
+// FLAG-CONTROLLED MANUAL ATTACK (process/strategy/manual-attack.ts)
+// ============================================================
+// 1. Place a flag in the TARGET room you want to attack.
+//    Name it "Attack" or "Attack:<label>" (e.g. "Attack:W28S19").
+//    The closest owned room (RCL >= 3, >= 5000 energy) is picked automatically.
+//
+// 2. Choose the flag PRIMARY COLOR to set squad composition:
+//    RED    → attacker + healer  (melee brawler pair)
+//    ORANGE → ranger + healer    (ranged pair) ← DEFAULT
+//    YELLOW → blinky             (self-healing ranged solo)
+//
+// 3. Remove the flag to automatically disband the squad.
+//
+// To manually check/manage attack squads via console:
+container.get('SquadManager').getSquad('attack:Attack');           // inspect
+container.get('SquadManager').getSquad('attack:Attack').disband(); // force disband
+delete Memory.squads['attack:Attack'];                             // remove memory
+
 // Force abandonment of a weak room.
 delete Memory.strategy.expand.evacuatingRoom; (new ExpandProcess()).abandonWeakRooms();
 

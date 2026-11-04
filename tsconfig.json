@@ -17,6 +17,10 @@
     "typeRoots": [
       "./node_modules/@types",
       "./node_modules/typed-screeps"
+    ],
+    "types": [
+      "lodash",
+      "node"
     ]
   },
   "exclude": [
