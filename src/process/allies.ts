@@ -44,7 +44,7 @@ export default class AlliesProcess extends Process {
 			}
 
 			Memory.requests.trade[RESOURCE_ENERGY][request.roomName] = {
-				amount: Math.min(request.maxAmount | 5000, 5000),
+				amount: Math.min(request.maxAmount ?? 5000, 5000),
 				lastSeen: Game.time,
 				priority: (request.goalType === FunnelGoal.RCL7) ? 3
 					: ((request.goalType === FunnelGoal.RCL8) ? 2
@@ -55,14 +55,14 @@ export default class AlliesProcess extends Process {
 
 		for (const request of simpleAllies.allySegmentData?.requests?.resource ?? []) {
 			const resourceType = request.resourceType;
-			if (!RESOURCES_ALL.includes(resourceType)) return;
+			if (!RESOURCES_ALL.includes(resourceType)) continue;
 
 			if (!Memory.requests.trade[resourceType]) {
 				Memory.requests.trade[resourceType] = {};
 			}
 
 			Memory.requests.trade[resourceType][request.roomName] = {
-				amount: Math.min(request.amount | 5000, 5000),
+				amount: Math.min(request.amount ?? 5000, 5000),
 				lastSeen: Game.time,
 				priority: Number(request.priority),
 				// @todo handle timeout

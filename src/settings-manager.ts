@@ -61,6 +61,9 @@ declare global {
 		powerMineCreepPriority: number;
 		powerMineRoomFilter?: (roomName: string) => boolean;
 		powerMiningCheckInterval: number;
+		powerFunnelMaxDistance: number;
+		powerFunnelPlayer: string | null;
+		powerFunnelReserve: number;
 		powerPriorities: PowerConstant[];
 		powerProcessingEnergyRatio: number;
 		prioritizeFactoryLevels: boolean;

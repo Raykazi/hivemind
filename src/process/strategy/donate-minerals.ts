@@ -6,6 +6,7 @@ import container from 'utils/container';
 import hivemind from 'hivemind';
 import Process from 'process/process';
 import {getRoomIntel} from 'room-intel';
+import {markTerminalUsed, wasTerminalUsedThisTick} from 'utils/terminal-usage';
 
 /**
  * Player name to donate T3 combat minerals to.
@@ -46,6 +47,7 @@ export default class DonateMineralsProcess extends Process {
 		for (const room of Game.myRooms) {
 			if (!room.terminal) continue;
 			if (room.terminal.cooldown > 0) continue;
+			if (wasTerminalUsedThisTick(room.terminal)) continue;
 
 			this.donateFromRoom(room, targetRooms);
 		}
@@ -93,7 +95,10 @@ export default class DonateMineralsProcess extends Process {
 			hivemind.log('trade').info('DonateMinerals: Sent', amount, mineral, 'from', room.name, 'to', targetRoom, ':', result);
 
 			// Each terminal can only send once per tick.
-			if (result === OK) return;
+			if (result === OK) {
+				markTerminalUsed(terminal);
+				return;
+			}
 		}
 	}
 

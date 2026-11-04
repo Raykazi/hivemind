@@ -5,6 +5,7 @@ import hivemind from 'hivemind';
 import Process from 'process/process';
 import utilities from 'utilities';
 import type {TransportRouteOption} from 'empire/trade-route-manager';
+import {markTerminalUsed} from 'utils/terminal-usage';
 
 /**
  * Sends resources between owned rooms when needed.
@@ -86,6 +87,7 @@ export default class ResourcesProcess extends Process {
 
 			// Use multiple routes as long as no room is involved multiple times.
 			if (sentSuccessfully) {
+				markTerminalUsed(terminal);
 				routes = _.filter(routes, (option: any) => option.source !== best.source && option.target !== best.source && option.source !== best.target && option.target !== best.target);
 			}
 			else if (clearTradesOfThisType) {

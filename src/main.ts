@@ -31,6 +31,7 @@ import CreepsProcess from 'process/creeps';
 import DepositMiningProcess from 'process/strategy/deposits';
 import DonateMineralsProcess from 'process/strategy/donate-minerals';
 import ExpandProcess from 'process/strategy/expand';
+import FunnelPowerProcess from 'process/strategy/funnel-power';
 import InitProcess from 'process/init';
 import interShard from 'intershard';
 import InterShardProcess from 'process/strategy/intershard';
@@ -215,11 +216,15 @@ class BotKernel {
 			hivemind.runProcess('empire.resources', ResourcesProcess, {
 				interval: 5,
 			});
-				hivemind.runProcess('empire.donate_minerals', DonateMineralsProcess, {
-					interval: 100,
-					priority: PROCESS_PRIORITY_LOW,
-				});
-			}
+			hivemind.runProcess('empire.donate_minerals', DonateMineralsProcess, {
+				interval: 100,
+				priority: PROCESS_PRIORITY_LOW,
+			});
+			hivemind.runProcess('empire.funnel_power', FunnelPowerProcess, {
+				interval: 10,
+				priority: PROCESS_PRIORITY_LOW,
+			});
+		}
 
 		hivemind.runProcess('empire.report', ReportProcess, {
 			interval: 100,
