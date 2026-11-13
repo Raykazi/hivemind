@@ -30,7 +30,8 @@ const MIN_ROOM_ENERGY = 30_000;
  * are within `powerFunnelMaxDistance` linear rooms of the sending room. If that
  * player has posted a simpleAllies power request for one of those rooms (and
  * is in our allies list), that room is preferred. Otherwise the closest room
- * is used.
+ * is used. With `powerFunnelRequestsOnly` (the default), only rooms with a live
+ * request get power, and never more than they asked for.
  */
 export default class FunnelPowerProcess extends Process {
 	run() {
@@ -46,6 +47,7 @@ export default class FunnelPowerProcess extends Process {
 
 		const maxDistance = hivemind.settings.get('powerFunnelMaxDistance');
 		const reserve = hivemind.settings.get('powerFunnelReserve');
+		const requestsOnly = hivemind.settings.get('powerFunnelRequestsOnly');
 
 		for (const room of Game.myRooms) {
 			const terminal = room.terminal;
@@ -54,10 +56,11 @@ export default class FunnelPowerProcess extends Process {
 			const surplus = room.getCurrentResourceAmount(RESOURCE_POWER) - reserve;
 			if (surplus < MIN_SEND_AMOUNT) continue;
 
-			const targetRoom = this.getBestTargetRoom(room.name, targetRooms, maxDistance);
-			if (!targetRoom) continue;
+			const target = this.getBestTargetRoom(room.name, targetRooms, maxDistance, requestsOnly);
+			if (!target) continue;
 
-			this.funnelFromRoom(room, targetRoom, Math.min(surplus, MAX_SEND_AMOUNT), playerName);
+			const wanted = Math.min(surplus, MAX_SEND_AMOUNT, target.requestedAmount ?? Number.POSITIVE_INFINITY);
+			this.funnelFromRoom(room, target.roomName, wanted, playerName);
 		}
 	}
 
@@ -77,12 +80,13 @@ export default class FunnelPowerProcess extends Process {
 	 * Picks the room to send power to from the given room.
 	 *
 	 * Rooms that currently request power through simpleAllies come first,
-	 * closest room otherwise.
+	 * closest room otherwise. With `requestsOnly`, rooms that aren't asking
+	 * for power are skipped, and the requested amount caps the send.
 	 */
-	getBestTargetRoom(roomName: string, targetRooms: string[], maxDistance: number): string | null {
+	getBestTargetRoom(roomName: string, targetRooms: string[], maxDistance: number, requestsOnly: boolean): {roomName: string; requestedAmount?: number} | null {
 		const powerRequests = Memory.requests?.trade?.[RESOURCE_POWER] || {};
 
-		let best: string | null = null;
+		let best: {roomName: string; requestedAmount?: number} | null = null;
 		let bestScore = -Infinity;
 		for (const targetRoom of targetRooms) {
 			const distance = Game.map.getRoomLinearDistance(roomName, targetRoom, true);
@@ -90,11 +94,12 @@ export default class FunnelPowerProcess extends Process {
 
 			const request = powerRequests[targetRoom];
 			const isRequesting = request && (request.timeout ?? request.lastSeen + 100) >= Game.time;
+			if (requestsOnly && !isRequesting) continue;
 			const score = (isRequesting ? 100 + (request.priority || 0) : 0) - (distance / (maxDistance + 1));
 
 			if (score > bestScore) {
 				bestScore = score;
-				best = targetRoom;
+				best = {roomName: targetRoom, requestedAmount: requestsOnly ? request.amount : undefined};
 			}
 		}
 

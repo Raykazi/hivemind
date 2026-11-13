@@ -191,6 +191,10 @@ const settings: SettingsObject = {
 	powerFunnelMaxDistance: 10,
 	// Amount of power each of our rooms keeps for itself instead of sending it.
 	powerFunnelReserve: 0,
+	// Only send to rooms that currently ask for power through simpleAllies, and
+	// no more than they ask for. Without this the funnel fills every free byte of
+	// the target's terminal, which can leave it with no room for energy.
+	powerFunnelRequestsOnly: true,
 
 	// Script hooks:
 	onGlobalReset: null,

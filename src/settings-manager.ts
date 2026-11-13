@@ -64,6 +64,7 @@ declare global {
 		powerFunnelMaxDistance: number;
 		powerFunnelPlayer: string | null;
 		powerFunnelReserve: number;
+		powerFunnelRequestsOnly: boolean;
 		powerPriorities: PowerConstant[];
 		powerProcessingEnergyRatio: number;
 		prioritizeFactoryLevels: boolean;
